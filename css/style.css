@@ -250,7 +250,7 @@ input:hover, textarea:hover, select:hover {
     bottom: 8px;
     white-space: pre;
     font-family: Consolas, monaco, monospace;
-    
+    font-size:smaller;
     overflow:auto;
 }
 
