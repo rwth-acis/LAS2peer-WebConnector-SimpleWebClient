@@ -1,4 +1,0 @@
-<config>
-	<protocol value="http">
-	<address value="127.0.0.1:8080"/>
-</config>

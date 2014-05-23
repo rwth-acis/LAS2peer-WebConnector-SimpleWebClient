@@ -1,1 +1,101 @@
-<!DOCTYPE html><html><head>    <link rel="stylesheet" href="css/style.css"/>	<script src="JScript/b64.js"></script>		<script src="JScript/jquery.js"></script>	<script src="JScript/main.js" charset="utf-8"></script>	</head><body>	<div id="main">        <div class="login">Username<input type="text" id="loginName" class="loginField"/></div>        <div class="login">Password<input type="password" id="loginPassword" class="loginField"/></div>		<div class="login">Service<input type="text" id="loginService" class="loginField"/></div>        <div class="loginButtonArea"><input type="button" id="loginButton" value="Login"/></div>        <div id="mainBox">            <div class="caption">Requests</div>            <textarea id="requests" name="Requests"  rows="10" ></textarea>            <input type="button" id="sendButton" value="Send"/>        </div>        <textarea id="output" name="Output"  rows="30" ></textarea>        <div id="contentBox">            <div class="caption">Contents</div>            <div id="contents">                <input type="button" id="addContentButton" value="Add"/>            </div>        </div>        <div id="config" style="display: none"></div>	</div></body></html>
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>WebConnector Client</title>
+    <link rel="stylesheet" href="css/style.css"/>
+	<script src="JS/b64.js"></script>	
+	<script src="JS/zepto.js"></script>
+	<script src="JS/main.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <div id="main">
+        <div id="leftPanel" class="panel lefthalf fullHeight">
+            <div class="innerPanel fullHeight dropShadow">
+                <div class="innerContent columnFlex">
+                    <div class="innerContentTitle">Server<input id="serverMinMax"  class="button minMaxButton" type="button" value="-" /></div>
+                    
+                    <div id="serverPanel" class="innerPanel bright">
+                        <div class="innerContent">
+                               
+                            <div class="inputBlock lefthalf">
+                                <div class="inputBlockTitle">Address</div>
+                                <input id="serverAddress" type="text" tabindex="1" placeholder="http://www.myserver188.org:9871" />
+                            </div>
+
+                            <div class="inputBlock lefthalf">
+                                <div class="inputBlockTitle">URI Prefix</div>
+                                <input id="uriPrefix" type="text" tabindex="2" placeholder="myService"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="innerContentTitle">Login<input id="loginMinMax"  class="button minMaxButton" type="button" value="-" /></div>
+                    <div id="loginPanel" class="innerPanel bright">
+                        <div class="innerContent">
+                               
+                            <div class="inputBlock lefthalf">
+                                <div class="inputBlockTitle">User</div>
+                                <input id="userName" type="text" tabindex="3" placeholder="John Doe"/>
+                            </div>
+
+                            <div class="inputBlock lefthalf">
+                                <div class="inputBlockTitle">Password</div>
+                                <input id="userPassword" type="password" tabindex="4" placeholder="password"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="innerContentTitle">Requests</div>
+                    <div class="innerPanel bright flex">
+                        <div class="innerContent">   
+                            <div class="rowFlex flex fullHeight">
+                                
+                                <div id="tabs"></div>
+                                <textarea id="requestArea" class="flex" tabindex="5" cols="20" name="S1" rows="2" wrap="off" spellcheck='false'></textarea>
+                            </div>
+                            <div class="bottomButtons">
+                                <input id="clearButton"  class="button" type="button" value="Clear" />
+                                <input id="sendButton"  class="button" type="button" value="Send" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div id="rightPanel" class="panel lefthalf fullHeight">
+            <div class="innerPanel fullHeight dropShadow">
+                <div id="displayBox" class="innerContent columnFlex">                    
+                        
+                    <div class="infoText">
+                         Interpret response as: 
+                        <select id="MIMESelector">
+                            <option value="1">text/plain</option>
+                            <option value="2">auto</option>
+                        </select>
+                        <span style="margin-left:10px; margin-right:5px;">  Display Area: </span>
+                        <div style="float:right">
+                            <input id="increaseDisplay"  class="button" type="button" value="+" />
+                            <input id="decreaseDisplay"  class="button" type="button" value="-" />
+                        </div>
+                    </div>
+                    
+
+                   <div id="contentDisplay"class="innerPanel bright"> 
+                        
+                    </div>
+                    <!-- <div id="separator"></div>-->
+                    <div id="logDisplay" class="innerPanel bright">
+                        <div id="log" class="flex" cols="20" name="S1" rows="2" wrap="off" readonly spellcheck='false'></div>
+                        
+                    </div>  
+                    <input id="clearLog"  class="button" type="button" value="Clear Log" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+</body>
+</html>

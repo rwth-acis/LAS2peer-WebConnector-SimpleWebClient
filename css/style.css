@@ -1,86 +1,273 @@
-body {
-
-    padding: 0px;
-    margin: 0px;
-    background-color: #009cff;
-    color: white;
-    font-family: Segoe UI, Tahoma, Verdana, sans-serif;
-    font-weight: 600;
-    font-size: 16px;
+﻿html{
+  height:98%;
+  height:calc(100% - 20px);
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+  font-weight:500;
+  font-size:medium;
+  color: #303030;
+  min-height:350px;
 }
-
+body {
+    
+    height: 100%;
+    margin:0px;
+    padding:0px;
+    background-color: #E0E0E0; 
+    
+}
 #main {
     height: 100%;
-    margin: 20px;
-    position: relative;
-    width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+}
+.panel {
+    display:block;
+    position:relative;
+    min-width:250px;
 }
 
-input {
-    margin: 10px 0;
-    width: 250px;
-    height: 40px;
-    position: relative;
-    display: block;
+.innerPanel {
+    background-color:#F1F1F1;
+    margin:3px;
+    
+    
+   
+    
 
+    display:block;
+    position:relative;
+    margin-bottom:10px;
+   
 }
 
-input {
-    width: 350px;
-    margin-left: auto;
-    margin-right: auto;
+
+.lefthalf {
+    width:50%;
+    float:left;
 }
 
-.caption {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    text-align: center;
+.righthalf {
+    
+    width:50%;
+    float:right;
 }
 
-.loginButtonArea {
-    display: block;
-	
-
+.fullHeight {
+    min-height:100%;
+    height:100%;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
 }
 
-#output, #requests {
-    width: 100%;
+.innerContent {
+    padding:8px;
+    
+    min-height:100%;
+    height:100%;
 }
 
-#loginButton {
-    clear: both;
-	width: 350px;
+.dropShadow {
+    box-shadow: 1px 1px 3px #888888;
 }
 
-.login {
-
-    text-align: center;
-    height: 30px;
-    float: left;
-    margin-bottom: 30px;
-    clear: right;
-    display: block;
-    width: 350px;
+.innerContentTitle {
+    text-align:left;
+    font-weight: 700;
+    padding-left:20px;
+    padding-top:1px;
+    
 }
 
-#mainBox {
-    display: block;
-    clear: both;
+.bright {
+    background-color:#FAFAFA;
+    box-shadow: 1px 1px 5px #888888;
+    border:none;
 }
 
-.login input {
+.inputBlockTitle {
+    text-align:left;
+    font-weight: 700;
+    
+}
+.inputBlock {
+    display:block;
+    padding:5px;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    min-width:150px;
+}
 
+.inputBlock input{
+    width:100%;
+}
+
+.columnFlex {
+    display: flex;   
+    flex-direction: column;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    -webkit-align-items: stretch;
+}
+
+.rowFlex {
+    display: flex;   
+    flex-direction: row;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    display: -webkit-flex;
+    -webkit-flex-flow: row;
+    -webkit-align-items: stretch;
+}
+
+.flex {
+    flex: 1;
+}
+
+.bottomButtons {
+    left:12px;
+    right:12px;
+    width:calc(100% - 24px);
+    position:absolute;
+    bottom:12px;
+    height: 32px;
+    box-sizing:border-box;
+}
+
+
+#requestArea {
+    
+    position:absolute;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    width:calc(100% - 126px);
+    height: calc(100% - 66px);
+    left: 113px;
+    right: 18px;
+    top: 8px;
+    bottom: 35px;
+    
+}
+
+#tabs {
+    width:90px;
+    
+    
+    position: absolute;
+    top: 8px;
+    bottom: 58px;
+    left: 12px;
+    
+}
+
+.activeTab {
+    background-color:#DDD;
+}
+
+input, textarea, select {
+    border:1px solid #999;
+   
+    color: black;
+    background-color: white;
     margin: 0px;
-    height: 25px;
-    width: 340px;
-	
+    box-sizing:border-box;
+    padding: 2px;
+    font-family: Consolas, monaco, monospace;
+    
+    white-space: nowrap;
+    resize: none;
 }
 
-.loginField {
-    height: 25px;
-    position: relative;
-    line-height: 22px;
+input:hover, textarea:hover, select:hover {
+    border:1px solid #000;
+}
 
+.button {
+    
+    font-weight:700;
+    display:block;
+    font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+    font-size:larger;
+    
+}
+.button:hover {
+    background-color:#EEE;
+    
+}
+.button:active {
+    
+    box-shadow: inset 1px 1px 5px #888888;
+}
+.bottomButtons input {
+    width:calc(50% - 2px);
+    float:left;
+    
+}
+.bottomButtons > input {
+    margin-right:2px;
+}
+
+#contentDisplay{
+    margin-bottom:5px;
+    flex:0.60;
+    padding:6px;
+    overflow:auto;
+    
+}
+#logDisplay{
+   
+    flex:0.40;
+    
+    
+}
+
+.infoText {
+    text-align:right;
+}
+
+.infoText input{
+    width:22px;
+    height:22px;
+    margin:2px;
+    float:right;
+    font-size:medium;
+    font-weight:500;
+}
+
+#separator {
+    margin:0px;
+    height:5px;
+    background-color:#999;
+}
+#log {
+    position:absolute;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    width:calc(100% - 26px);
+    height: calc(100% - 20px);
+    left: 13px;
+    right: 18px;
+    top: 8px;
+    bottom: 8px;
+    white-space: pre;
+    font-family: Consolas, monaco, monospace;
+    
+    overflow:auto;
+}
+
+#tabs input {
+    width:100%;
+    font-size:medium;
+    font-weight:500;
+    margin-bottom:-1px;
+}
+
+.minMaxButton {
+        float:right;
+        width:20px;
+        line-height:20px;
+        height: 20px;
+        margin-right:3px;
+        font-weight:300;
+        padding:0px;
+        font-size:small;
 }

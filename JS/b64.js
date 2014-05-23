@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright Vassilis Petroulias [DRDigit]
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,7 +80,7 @@ var B64 = {
             len = s.length,
             chr, buffer = [];
         if (/^[\x00-\x7f]*$/.test(s)) while (++position < len)
-        buffer.push(s.charCodeAt(position));
+            buffer.push(s.charCodeAt(position));
         else while (++position < len) {
             chr = s.charCodeAt(position);
             if (chr < 128) buffer.push(chr);
@@ -97,7 +97,7 @@ var B64 = {
             len = B64.alphabet.length;
             B64.lookup = {};
             while (++position < len)
-            B64.lookup[B64.alphabet[position]] = position;
+                B64.lookup[B64.alphabet[position]] = position;
             position = -1;
         }
         len = s.length;
