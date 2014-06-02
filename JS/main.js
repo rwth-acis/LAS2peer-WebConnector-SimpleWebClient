@@ -8,6 +8,7 @@ var _DELETE = "delete";
 var TEXT_PLAIN = 0;
 
 $(document).ready(function () {
+    //clearState();
     init();
 });
 
@@ -42,12 +43,17 @@ function sendRequest(method, URI, content, customHeaders, callback, errorCallbac
         data: content,
         contentType: "text/plain; charset=UTF-8",
         crossDomain: true,
-        headers: { "Authorization": "Basic " + getBasicAuthLogin() },
+        headers: { },
 
         error: function (xhr, errorType, error) {
             var errorText = error;
             if (xhr.responseText != null && xhr.responseText.trim().length > 0)
                 errorText = xhr.responseText;
+            if (xhr.status == 0) {
+               
+                errorText = "WebConnector does not respond";
+            }
+
             outputError(xhr.status, method, requestURI, errorText);
             errorCallback();
         },
@@ -59,6 +65,10 @@ function sendRequest(method, URI, content, customHeaders, callback, errorCallbac
         },
     };
    
+    var auth = getBasicAuthLogin();
+    if (auth != null) {
+        ajaxObj.headers["Authorization"] = "Basic " + auth;
+    }
     if (customHeaders !== undefined && customHeaders !== null) {
         $.extend(ajaxObj.headers, customHeaders);
     }
@@ -223,12 +233,18 @@ function getBaseURI() {
     return $("#serverAddress").val() + ($("#uriPrefix").val().trim().length > 0 ? ("/" + $("#uriPrefix").val().trim()) : "");
 }
 function getBasicAuthLogin() {
+    if ($("#userName").val().trim().length == 0)//check if any credentials given
+        return null;
+
     return B64.encode($("#userName").val() + ":" + $("#userPassword").val());
 }
 function initFocus() {
     $("#userPassword").focus();
 }
 
+function clearState() {
+    localStorage.clear();
+}
 function saveState() {
     localStorage["serverAddress"] = $("#serverAddress").val();
     localStorage["uriPrefix"] = $("#uriPrefix").val();
@@ -239,11 +255,26 @@ function saveState() {
     localStorage["MIMESelector"] = sel.selectedIndex;
 }
 
+function loadDefaults() {
+    if (clientDefaults !== null) {
+        $("#serverAddress").val(clientDefaults.address);
+        $("#uriPrefix").val(clientDefaults.uriPrefix);
+        $("#userName").val(clientDefaults.userName);
+        $("#userPassword").val(clientDefaults.userPassword);
+        $("#helpButton").attr("href", clientDefaults.helpPage);
+        $("#requestArea").val(clientDefaults.request);
+        var sel = document.getElementById("MIMESelector");
+        sel.selectedIndex = clientDefaults.MIME;
+    }
+
+}
 function loadState() {
     if (localStorage["serverAddress"] !== undefined)
         $("#serverAddress").val(localStorage["serverAddress"]);
-    else
+    else {
+        loadDefaults();
         $("#serverAddress").focus();
+    }
 
     if (localStorage["uriPrefix"] !== undefined)
         $("#uriPrefix").val(localStorage["uriPrefix"]);
@@ -304,6 +335,16 @@ function switchTab(id) {
     $("#contentTab" + id).addClass("activeTab");
 }
 function initEvents() {
+    $('#resetButton').on('click', function (e) {
+        clearState();
+        window.location.reload();
+    });
+    $('#helpButton').on('click', function (e) {
+       // window.location.href = $('#helpButton').attr("href");
+        var win = window.open($('#helpButton').attr("href"), '_blank');
+        win.focus();
+    });
+    
     $('#clearButton').on('click', function (e) {
         clearTextArea();
     });
