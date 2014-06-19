@@ -225,12 +225,12 @@ input:hover, textarea:hover, select:hover {
     flex:0.60;
     padding:6px;
     overflow:auto;
-    
+    white-space: pre;
 }
 #logDisplay{
    
     flex:0.40;
-    
+    white-space: pre;
     
 }
 

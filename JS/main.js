@@ -60,8 +60,8 @@ function sendRequest(method, URI, content, customHeaders, callback, errorCallbac
         success: function (data, status, xhr) {
            
             var type = xhr.getResponseHeader("content-type");
-            logRequest(method, requestURI, data);
-            callback(data, type);
+            logRequest(method, requestURI, xhr.responseText);
+            callback(xhr.responseText, type);
         },
     };
    
