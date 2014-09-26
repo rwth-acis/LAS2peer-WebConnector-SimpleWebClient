@@ -1,30 +1,37 @@
-﻿var tabContents = {};
+﻿
+var tabContents = {};
 var currentTab = 0;
+
+
+var api = i5.las2peer.jsAPI;
 
 var _GET = "get";
 var _PUT = "put";
 var _POST = "post";
 var _DELETE = "delete";
 var TEXT_PLAIN = 0;
-
+var SYNC = 1;
+var ASYNC = 2;
 $(document).ready(function () {
     //clearState();
     init();
 });
 
 function init() {
-    initEvents();
-    initTabs();
-    initFocus();
-    loadState();
-    initPlaceholder();
-    initTooltips();
+
+
+  initEvents();
+  initTabs();
+  initFocus();
+  loadState();
+  initPlaceholder();
+  initTooltips();
 }
 function initTooltips() {
     $("#tabs").attr("title", "Add content-tabs for PUT/POST requests. \nReference them in the request directly afer the URI using their number.\nThe content of the respective tab is then attached as the body to the http request.");
     $(".minMaxButton").attr("title", "Collapses/expands the panel beneath it.");
 
-    $("#requestArea").attr("title", "For multiple requests use different lines.\nSyntax: HTTP-Method URI content-tab-number [header:value,header2:value2...].\nContent numbers and headers are optional: get food/pizza");
+    $("#requestArea").attr("title", "For multiple requests use different lines.\nSyntax: <HTTP-Method> <URI> <content-tab-number> [header:value,header2:value2...].\nContent numbers and headers are optional: get food/pizza \nUse keywords sync or async as a line to send the requests synchroniously or asynchroniously.");
     $("#MIMESelector").attr("title", "Display response as text or try to interpret it based on the MIME-type.");
     $("#increaseDisplay").attr("title", "Increases the area for the result and decreases the area for the log.");
     $("#decreaseDisplay").attr("title", "Decreases the area for the result and increases the area for the log.");
@@ -34,53 +41,15 @@ function initPlaceholder() {
     $("#requestArea").attr("placeholder", placeholder);
     $("#requestArea").on("focus", function (e) { $("#requestArea").attr("placeholder", "");});
 }
-function sendRequest(method, URI, content, customHeaders, callback, errorCallback) {
-    var requestURI = encodeURI(getBaseURI() + "/" + URI);
-    var ajaxObj = {
-        url: requestURI,
 
-        type: method.toUpperCase(),
-        data: content,
-        contentType: "text/plain; charset=UTF-8",
-        crossDomain: true,
-        headers: { },
-
-        error: function (xhr, errorType, error) {
-            var errorText = error;
-            if (xhr.responseText != null && xhr.responseText.trim().length > 0)
-                errorText = xhr.responseText;
-            if (xhr.status == 0) {
-               
-                errorText = "WebConnector does not respond";
-            }
-
-            outputError(xhr.status, method, requestURI, errorText);
-            errorCallback();
-        },
-        success: function (data, status, xhr) {
-           
-            var type = xhr.getResponseHeader("content-type");
-            logRequest(method, requestURI, xhr.responseText);
-            callback(xhr.responseText, type);
-        },
-    };
-   
-    var auth = getBasicAuthLogin();
-    if (auth != null) {
-        ajaxObj.headers["Authorization"] = "Basic " + auth;
-    }
-    if (customHeaders !== undefined && customHeaders !== null) {
-        $.extend(ajaxObj.headers, customHeaders);
-    }
-    
-    $.ajax(ajaxObj);
-}
 
 function parseRequests(input, contents) {
     var lines = input.split("\n");
     var filtered = lines.filter(function (e) { return e.trim().length > 0; });
-
-    sendRequests(filtered, contents);
+    
+    if (input.length <= 0)
+      return;
+    sendRequests(filtered, contents,0,SYNC);
 }
 
 function parseRequest(request) {
@@ -95,7 +64,18 @@ function parseRequest(request) {
     if (filtered.length < 1)
         return null;
 
-    requestData.method = filtered[0].trim().toLowerCase();
+    var first = filtered[0].trim().toLowerCase();
+    requestData.syncMode = -1;
+    if (first == "sync") {
+      requestData.syncMode = SYNC;
+      return requestData;
+    }
+    else if (first == "async") {
+      requestData.syncMode = ASYNC;
+      return requestData;
+    }
+
+    requestData.method = first;
 
     if (filtered.length < 2)
         requestData.uri = "";
@@ -127,44 +107,65 @@ function parseRequest(request) {
 
     return requestData;
 }
-function sendRequests(requests, contents) {
-    (function () {
-        var index = 0;
-        var postCounter = 0;
+function sendRequests(lines, contents, offset, syncMode) {
+  var login;
+  var newAjax={};
+  newAjax.success= function (data, status, xhr) {
+           
+    var type = xhr.getResponseHeader("content-type");
+    
+    logRequest(this.method, this.url, xhr.responseText);
+    outputResponse(xhr.responseText, type);
+  };
 
-        function sendNewRequest() {
-            if (index < requests.length) {
-                var requestData = parseRequest(requests[index]);
-                if (requestData == null) {
-                    outputParseError("Invalid request: " + requests[index]);
-                    return;
-                }
+  if ($("#userPassword").val().length > 0) {
+    login = new api.Login(api.LoginTypes.HTTP_BASIC);
+    login.setUserAndPassword($("#userName").val(), $("#userPassword").val());
+  }
+  else
+    login = new api.Login(api.LoginTypes.NONE);
 
-                var content = "";
-                if (requestData.isSending) {
-                    if (requestData.content in contents) {
-                        content = contents[requestData.content];
-                    }
-                    else {
-                        outputParseError("Invalid content number: " + requests[index]);
-                        return;
-                    }
-                }
+  var requestSender = new api.RequestSender(getBaseURI(), login, newAjax);
+  var requests = [];
+  for (var i = offset; i < lines.length; i++) {
+    var requestData = parseRequest(lines[i]);
+    if (requestData.syncMode > -1)
+    {
+      if (syncMode == SYNC) {
+        requestSender.sendRequestsSync(requests, function () { sendRequests(lines, contents, i + 1, requestData.syncMode); });
+      }
+      else if (syncMode == ASYNC) {
+        requestSender.sendRequestsAsync(requests, function () { sendRequests(lines, contents, i + 1, requestData.syncMode); });
+      }
+      return;
+    }
 
-                sendRequest(requestData.method, requestData.uri, content, requestData.headers, function (data, type) {
-                    outputResponse(data, type);
-                    ++index;
-                    sendNewRequest();
-                }, function () {
-                    ++index;
-                    sendNewRequest();
-                });
-            }
-        }
-
-        sendNewRequest();
-    })();
+    if (requestData == null) {
+      outputParseError("Invalid request: " + requests[i]);
+      return;
+    }
+    var content = "";
+    if (requestData.isSending) {
+      if (requestData.content in contents) {
+        content = contents[requestData.content];
+      }
+      else {
+        outputParseError("Invalid content number: " + requests[index]);
+        return;
+      }
+    }
+    
+    requests.push(new api.Request(requestData.method, requestData.uri, content, outputResponse, outputError));
+  }
+  if (syncMode == SYNC) {
+    requestSender.sendRequestsSync(requests, function () {});
+  }
+  else if (syncMode == ASYNC) {
+    requestSender.sendRequestsAsync(requests, function () {});
+  }
 }
+
+
 function isBase64(text) {
     var base64Matcher = new RegExp("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$");
     return base64Matcher.test(text.trim());
@@ -199,9 +200,8 @@ function logRequest(method, uri, data) {
     var logEntry = method.toUpperCase() + " " + uri + "\n" + data;
     log(logEntry, false);
 }
-function outputError(status, method, uri, error) {
-    var logEntry = status + " " + error + "\n" + method.toUpperCase() + " " + uri + "\n";
-    log(logEntry, true);
+function outputError(error) {
+    log(error+"\n", true);
 }
 function outputParseError(line) {
     log(line, true);
@@ -388,7 +388,7 @@ function resizePanels() {
         $("#leftPanel").css("width", "50%");
     }
     var rightPanelTop = $("#rightPanel").offset().top;
-    if (rightPanelTop > 10) {
+    if (rightPanelTop > 100) {
         $("#rightPanel").css("width", "100%");
         $("#leftPanel").css("width", "100%");
     }
