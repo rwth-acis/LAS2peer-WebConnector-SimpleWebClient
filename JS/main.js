@@ -101,7 +101,7 @@ function parseRequest(request) {
             var split = headersStringSplit[i].split(":");
             if (split.length != 2)
                 return null;
-            requestData.headers[split[0].trim()] = split[1].trim();
+            requestData.headers[split[0].trim()] = split[1].trim();			
         }
     }
 
@@ -155,7 +155,7 @@ function sendRequests(lines, contents, offset, syncMode) {
       }
     }
     
-    requests.push(new api.Request(requestData.method, requestData.uri, content, outputResponse, outputError));
+    requests.push(new api.Request(requestData.method, requestData.uri, content, outputResponse, outputError, requestData.headers));
   }
   if (syncMode == SYNC) {
     requestSender.sendRequestsSync(requests, function () {});
